@@ -1,0 +1,125 @@
+/* src/pages/TimeCapsulePage.css */
+.time-capsule-container {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.capsule-textarea {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  margin-top: 10px;
+  resize: vertical;
+}
+
+.controls-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.controls-container label {
+  font-size: 1.1rem;
+}
+
+.duration-select {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.seal-button {
+  margin-top: 20px;
+  padding: 12px 25px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #28a745; /* สีเขียว */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.seal-button:hover {
+  background-color: #218838;
+}
+
+.opened-capsules-section {
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+/* Style for our new Date Picker input */
+.date-picker-input {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  text-align: center;
+  width: 200px; /* กำหนดความกว้าง */
+  cursor: pointer;
+}
+
+/* เพิ่มท้ายไฟล์ src/pages/TimeCapsulePage.css */
+.capsule-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 15px;
+  text-align: left;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0;
+}
+.compare-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.compare-button:hover {
+  background-color: #0056b3;
+}
+
+/* src/pages/TimeCapsulePage.css */
+
+.button-group {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.test-button {
+  padding: 12px 25px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #6c757d; /* สีเทา */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.test-button:hover {
+  background-color: #5a6268;
+}

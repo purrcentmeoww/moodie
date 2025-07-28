@@ -1,34 +1,29 @@
-import React, { useState } from 'react';
-import './App.css';
-import CalendarPage from './CalendarPage.jsx';
+// src/App.jsx
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// Import หน้าต่างๆ และ Layout
+import Navbar from './components/layout/Navbar';
+import HomePage from './pages/HomePage';
+import TimeCapsulePage from './pages/TimeCapsulePage';
+import EmpathyWallPage from './pages/EmpathyWallPage';
+
+import './App.css'; // สามารถเก็บ CSS ที่ใช้ร่วมกันทั้งแอปไว้ที่นี่
 
 function App() {
-  const [username, setUsername] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSubmitted(true);
-  };
-
   return (
-    <div className="app">
-      {!submitted ? (
-        <form onSubmit={handleSubmit} className="form">
-          <h1>Welcome to Mood Tracker</h1>
-          <input
-            type="text"
-            placeholder="Enter your name"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <button type="submit">Submit</button>
-        </form>
-      ) : (
-        <CalendarPage username={username} />
-      )}
-    </div>
+    <Router>
+      <div className="app-container">
+        <Navbar />
+        <main className="content">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/time-capsule" element={<TimeCapsulePage />} />
+            <Route path="/empathy-wall" element={<EmpathyWallPage />} />
+          </Routes>
+        </main>
+      </div>
+    </Router>
   );
 }
 
