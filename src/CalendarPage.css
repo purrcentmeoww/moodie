@@ -1,11 +1,12 @@
 .calendar-page {
-    padding: 20px;
+  margin: auto;
+  padding: 20px;
   }
   
   .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
+    gap: 5px;
     margin: 20px auto;
     max-width: 500px;
   }
@@ -18,7 +19,9 @@
   }
   
   .entry-box {
-    margin-top: 20px;
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
   }
   
   textarea {
