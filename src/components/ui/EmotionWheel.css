@@ -1,0 +1,14 @@
+/* src/components/ui/EmotionWheel.css */
+.emotion-wheel-wrapper {
+  width: 100%;
+  max-width: 500px; /* เพิ่มขนาดสูงสุด */
+  margin: 20px auto;
+  font-family: sans-serif;
+}
+
+/* ปรับปรุง font ของ label ในกราฟให้อ่านง่ายขึ้น */
+.recharts-pie-label-text {
+  font-size: 14px;
+  font-weight: bold;
+  fill: #333;
+}

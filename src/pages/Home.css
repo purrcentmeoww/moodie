@@ -1,0 +1,45 @@
+.home {
+  max-width: 360px;
+  margin: 50px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.home h1 {
+  color: #ff92ce;
+  margin-bottom: 20px;
+  font-size: large;
+}
+
+.home input {
+  width: 90%;
+  padding: 10px;
+  border: 1.5px solid #ffffff;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 1rem;
+}
+
+.home input:focus {
+  border-color: #3a86ff;
+  outline: none;
+}
+
+.home button {
+  width: 100%;
+  padding: 12px;
+  background: #ffa2c7;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.home button:hover {
+  background: #2a6cd1;
+}
