@@ -2,7 +2,7 @@
   max-width: 600px;
   margin: 0 auto;
   padding: 2rem;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
   color: #333;
   position: relative;
 }
@@ -24,6 +24,11 @@ h1 {
   padding: 1rem;
   margin-bottom: 1rem;
   box-shadow: 0 0 5px rgba(255, 107, 129, 0.2);
+  transition: box-shadow 0.3s ease;
+}
+
+.post-card:hover {
+  box-shadow: 0 0 12px rgba(255, 107, 129, 0.3);
 }
 
 .post-header {
@@ -59,6 +64,20 @@ h1 {
 .comments-section {
   padding-top: 0.5rem;
   border-top: 1px solid #fcd6dc;
+}
+
+/* Animation สำหรับแสดง/ซ่อนคอมเมนต์ */
+.comments-wrapper {
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out;
+}
+
+.comments-wrapper.collapsed {
+  max-height: 200px; /* ปรับให้พอดี 2 คอมเมนต์ */
+}
+
+.comments-wrapper.expanded {
+  max-height: 1000px; /* เพียงพอสำหรับหลายคอมเมนต์ */
 }
 
 .comment {
@@ -206,7 +225,7 @@ h1 {
   color: white;
 }
 
-/* เพิ่มเติม: แสดง/ซ่อนคอมเมนต์ */
+/* ปุ่มแสดง/ซ่อนคอมเมนต์ */
 .show-more-comments-btn {
   background: none;
   border: none;
@@ -224,6 +243,7 @@ h1 {
   background-color: #ffe6ea;
 }
 
+/* Animation fade */
 @keyframes fadeIn {
   from {
     opacity: 0;

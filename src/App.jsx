@@ -7,7 +7,7 @@ import Home from './pages/Home'; // หน้าแรกให้กรอก�
 import TimeCapsulePage from './pages/TimeCapsulePage';
 import EmpathyWallPage from './pages/EmpathyWallPage';
 import CalendarPage from './pages/CalendarPage';
-import HomePage from './pages/HomePage'; // สำหรับ analyze หน้าอื่น ๆ
+import HomePage from './pages/Homepage'; // สำหรับ analyze หน้าอื่น ๆ
 import './App.css';
 
 function App() {
