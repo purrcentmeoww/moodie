@@ -1,35 +1,44 @@
+// src/App.jsx
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 
 import Navbar from './components/layout/Navbar';
-import Home from './pages/Home';
+import Home from './pages/Home'; // หน้าแรกให้กรอกชื่อ
 import TimeCapsulePage from './pages/TimeCapsulePage';
 import EmpathyWallPage from './pages/EmpathyWallPage';
 import CalendarPage from './pages/CalendarPage';
-import HomePage from './pages/Homepage';
+import HomePage from './pages/Homepage'; // สำหรับ analyze
+
 import './App.css';
 
 function App() {
   const [username, setUsername] = useState('');
 
-  // โหลดค่าจาก localStorage เมื่อ component โหลดครั้งแรก
+  // โหลด username จาก localStorage เมื่อโหลดแอป
   useEffect(() => {
-    const savedUsername = localStorage.getItem('username');
-    if (savedUsername) {
-      setUsername(savedUsername);
+    const storedName = localStorage.getItem('username');
+    if (storedName) {
+      setUsername(storedName);
     }
   }, []);
 
+  // เมื่อ login สำเร็จ
   const handleLogin = (name) => {
     setUsername(name);
-    localStorage.setItem('username', name); // เก็บลง localStorage ด้วย
+    localStorage.setItem('username', name);
+  };
+
+  // เมื่อ logout
+  const handleLogout = () => {
+    setUsername('');
+    localStorage.removeItem('username');
   };
 
   return (
     <Router>
       <div className="app-container">
-        {/* แสดง Navbar เมื่อมี username */}
-        {username && <Navbar />}
+        {/* แสดง Navbar เฉพาะเมื่อ login แล้ว */}
+        {username && <Navbar onLogout={handleLogout} />}
 
         <main className="content">
           <Routes>
