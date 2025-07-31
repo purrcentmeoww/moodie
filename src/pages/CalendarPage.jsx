@@ -15,7 +15,6 @@ const mockAnalyzeMoodAPI = async (text) => {
   }
 };
 
-
 const moodColors = {
   happy: '#FFD700',
   sad: '#87CEFA',
@@ -25,6 +24,7 @@ const moodColors = {
 
 function CalendarPage({ username }) {
   const today = new Date();
+  const currentDay = today.getDate();
   const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
   const [entries, setEntries] = useState({});
@@ -48,9 +48,15 @@ function CalendarPage({ username }) {
         {days.map((day) => (
           <div
             key={day}
-            className="day"
+            className={`day ${day === currentDay ? 'current-day' : ''}`}
             onClick={() => setSelectedDay(day)}
-            style={{ backgroundColor: entries[day]?.mood ? moodColors[entries[day].mood] : '#fff' }}
+            style={{
+              backgroundColor: entries[day]?.mood
+                ? moodColors[entries[day].mood]
+                : day === currentDay
+                ? '#fff'
+                : '#fff'
+            }}
           >
             {day}
           </div>
