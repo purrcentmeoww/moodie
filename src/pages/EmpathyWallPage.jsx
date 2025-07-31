@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./EmpathyWallPage.css";
+import BubbleBackground from "../components/ui/BubbleBackground.jsx"; 
 
 const avatars = [
   {
@@ -76,10 +77,7 @@ const EmpathyWallPage = () => {
 
     const updatedPosts = posts.map((post) =>
       post.id === postId
-        ? {
-            ...post,
-            comments: [...post.comments, newComment],
-          }
+        ? { ...post, comments: [...post.comments, newComment] }
         : post
     );
 
@@ -112,135 +110,142 @@ const EmpathyWallPage = () => {
   };
 
   return (
-    <div className="wall-container">
-      <h1>🧡 Empathy Wall</h1>
+    <>
+      <BubbleBackground />
 
-      <div className="posts-section">
-        {posts.map((post) => {
-          const isExpanded = expandedComments.includes(post.id);
-          const visibleComments = isExpanded
-            ? post.comments
-            : post.comments.slice(0, 2);
+      <div className="wall-container">
+        <h1> Empathy Wall</h1>
 
-          return (
-            <div className="post-card" key={post.id}>
-              <div className="post-header">
-                <img className="avatar" src={post.avatar} alt={post.username} />
-                <div>
-                  <strong>{post.username}</strong>
-                  <div className="post-time">{timeAgo(post.createdAt)}</div>
+        <div className="posts-section">
+          {posts.map((post) => {
+            const isExpanded = expandedComments.includes(post.id);
+            const visibleComments = isExpanded
+              ? post.comments
+              : post.comments.slice(0, 2);
+
+            return (
+              <div className="post-card" key={post.id}>
+                <div className="post-header">
+                  <img className="avatar" src={post.avatar} alt={post.username} />
+                  <div>
+                    <strong>{post.username}</strong>
+                    <div className="post-time">{timeAgo(post.createdAt)}</div>
+                  </div>
+                  <button
+                    className="delete-post-btn"
+                    onClick={() => handleDeletePost(post.id)}
+                  >
+                    ลบโพสต์
+                  </button>
                 </div>
-                <button
-                  className="delete-post-btn"
-                  onClick={() => handleDeletePost(post.id)}
-                >
-                  ลบโพสต์
-                </button>
-              </div>
 
-              <p className="post-text">{post.text}</p>
+                <p className="post-text">{post.text}</p>
 
-              <div className="comments-section">
-                <div
-                  className={`comments-wrapper ${
-                    isExpanded ? "expanded" : "collapsed"
-                  }`}
-                >
-                  {visibleComments.map((comment) => (
-                    <div className="comment" key={comment.id}>
-                      <img
-                        className="avatar small"
-                        src={comment.avatar}
-                        alt={comment.username}
-                      />
-                      <div>
-                        <strong>{comment.username}</strong>
-                        <div>{comment.text}</div>
+                <div className="comments-section">
+                  <div
+                    className={`comments-wrapper ${
+                      isExpanded ? "expanded" : "collapsed"
+                    }`}
+                  >
+                    {visibleComments.map((comment) => (
+                      <div className="comment" key={comment.id}>
+                        <img
+                          className="avatar small"
+                          src={comment.avatar}
+                          alt={comment.username}
+                        />
+                        <div>
+                          <strong>{comment.username}</strong>
+                          <div>{comment.text}</div>
+                        </div>
+                        <button
+                          className="delete-comment-btn"
+                          onClick={() =>
+                            handleDeleteComment(post.id, comment.id)
+                          }
+                        >
+                          ลบ
+                        </button>
                       </div>
-                      <button
-                        className="delete-comment-btn"
-                        onClick={() =>
-                          handleDeleteComment(post.id, comment.id)
-                        }
-                      >
-                        ลบ
-                      </button>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+
+                  {post.comments.length > 2 && !isExpanded && (
+                    <button
+                      className="show-more-comments-btn"
+                      onClick={() => toggleShowAllComments(post.id)}
+                    >
+                      แสดงคอมเมนต์เพิ่มเติม...
+                    </button>
+                  )}
+
+                  {post.comments.length > 2 && isExpanded && (
+                    <button
+                      className="show-more-comments-btn"
+                      onClick={() => toggleShowAllComments(post.id)}
+                    >
+                      ซ่อนคอมเมนต์
+                    </button>
+                  )}
+
+                  <form
+                    onSubmit={(e) => {
+                      const form = e.target;
+                      const commentInput = form.elements[`comment-${post.id}`];
+                      const commentText = commentInput.value;
+                      handleCommentSubmit(e, post.id, commentText);
+                      commentInput.value = "";
+                    }}
+                    className="comment-form"
+                  >
+                    <input
+                      type="text"
+                      name={`comment-${post.id}`}
+                      placeholder="พิมพ์ข้อความให้กำลังใจ..."
+                      required
+                    />
+                    <button type="submit">ส่ง</button>
+                  </form>
                 </div>
-
-                {post.comments.length > 2 && !isExpanded && (
-                  <button
-                    className="show-more-comments-btn"
-                    onClick={() => toggleShowAllComments(post.id)}
-                  >
-                    แสดงคอมเมนต์เพิ่มเติม...
-                  </button>
-                )}
-
-                {post.comments.length > 2 && isExpanded && (
-                  <button
-                    className="show-more-comments-btn"
-                    onClick={() => toggleShowAllComments(post.id)}
-                  >
-                    ซ่อนคอมเมนต์
-                  </button>
-                )}
-
-                <form
-                  onSubmit={(e) => {
-                    const form = e.target;
-                    const commentInput = form.elements[`comment-${post.id}`];
-                    const commentText = commentInput.value;
-                    handleCommentSubmit(e, post.id, commentText);
-                    commentInput.value = "";
-                  }}
-                  className="comment-form"
-                >
-                  <input
-                    type="text"
-                    name={`comment-${post.id}`}
-                    placeholder="พิมพ์ข้อความให้กำลังใจ..."
-                    required
-                  />
-                  <button type="submit">ส่ง</button>
-                </form>
               </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <button
-        className="floating-post-button"
-        onClick={() => setShowModal(true)}
-      >
-        ➕ โพสต์
-      </button>
-
-      {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>📝 เขียนโพสต์ของคุณ</h2>
-            <form onSubmit={handlePostSubmit} className="post-form">
-              <textarea
-                value={newPost}
-                onChange={(e) => setNewPost(e.target.value)}
-                placeholder="แชร์ความรู้สึกของคุณ..."
-                required
-                autoFocus
-              />
-              <div className="modal-buttons">
-                <button type="submit">โพสต์</button>
-                <button type="button" onClick={() => setShowModal(false)}>
-                  ยกเลิก
-                </button>
-              </div>
-            </form>
-          </div>
+            );
+          })}
         </div>
-      )}
-    </div>
+
+        {/* ปุ่มโพสต์พร้อมกล่องพื้นหลัง */}
+        <div className="floating-post-wrapper">
+          <button
+            className="floating-post-button"
+            onClick={() => setShowModal(true)}
+          >
+            โพสต์
+          </button>
+        </div>
+
+        {showModal && (
+          <div className="modal-overlay" onClick={() => setShowModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <h2>📝 เขียนโพสต์ของคุณ</h2>
+              <form onSubmit={handlePostSubmit} className="post-form">
+                <textarea
+                  value={newPost}
+                  onChange={(e) => setNewPost(e.target.value)}
+                  placeholder="แชร์ความรู้สึกของคุณ..."
+                  required
+                  autoFocus
+                />
+                <div className="modal-buttons">
+                  <button type="submit">โพสต์</button>
+                  <button type="button" onClick={() => setShowModal(false)}>
+                    ยกเลิก
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

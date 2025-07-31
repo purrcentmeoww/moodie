@@ -9,6 +9,15 @@ function CapsuleComparisonView({ capsule, onBack }) {
   const [currentAnalysis, setCurrentAnalysis] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  if (!capsule || !capsule.pastAnalysis || !capsule.pastAnalysis.breakdown) {
+    return (
+      <div className="comparison-container">
+        <button onClick={onBack} className="back-button">← กลับไปหน้ารวม</button>
+        <h2>ไม่สามารถโหลดข้อมูลแคปซูลได้</h2>
+      </div>
+    );
+  }
+
   const handleAnalyzeCurrent = async () => {
     if (!currentText.trim()) return;
     setIsLoading(true);
@@ -22,14 +31,12 @@ function CapsuleComparisonView({ capsule, onBack }) {
       <button onClick={onBack} className="back-button">← กลับไปหน้ารวม</button>
       <h1>เปรียบเทียบอารมณ์ของคุณ</h1>
       <div className="comparison-grid">
-        {/* คอลัมน์อดีต */}
         <div className="comparison-card">
           <h2>อดีต ({new Date(capsule.createdAt).toLocaleDateString('th-TH')})</h2>
           <div className="text-box past-text">"{capsule.text}"</div>
           <EmotionWheel data={capsule.pastAnalysis.breakdown} />
         </div>
 
-        {/* คอลัมน์ปัจจุบัน */}
         <div className="comparison-card">
           <h2>ปัจจุบัน</h2>
           <textarea

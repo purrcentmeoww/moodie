@@ -1,257 +1,255 @@
 .wall-container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-family: "Segoe UI", sans-serif;
-  color: #333;
+  font-family: 'Sriracha', cursive;
   position: relative;
-}
-
-h1 {
-  text-align: center;
-  color: #ff6b81;
-  margin-bottom: 1.5rem;
+  z-index: 0;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding-top: 80px; /* ปรับตามความสูงของ navbar */
 }
 
 .posts-section {
-  margin-top: 2rem;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .post-card {
-  background-color: #fff8f9;
-  border: 1px solid #ffd6dc;
-  border-radius: 15px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 0 5px rgba(255, 107, 129, 0.2);
-  transition: box-shadow 0.3s ease;
+  background-color: #fdfdfd;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+  transition: box-shadow 0.2s;
 }
 
 .post-card:hover {
-  box-shadow: 0 0 12px rgba(255, 107, 129, 0.3);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
 
 .post-header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .avatar {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .avatar.small {
   width: 30px;
   height: 30px;
-  border-radius: 50%;
-}
-
-.post-time {
-  font-size: 0.8rem;
-  color: #999;
 }
 
 .post-text {
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  margin-bottom: 15px;
+  white-space: pre-wrap;
   text-align: left;
+  padding-left: 4px;
+  color: #333;
+}
+
+.post-time {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.delete-post-btn,
+.delete-comment-btn,
+.show-more-comments-btn {
+  background: none;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-left: auto;
+}
+
+.delete-post-btn:hover,
+.delete-comment-btn:hover,
+.show-more-comments-btn:hover {
+  text-decoration: underline;
+  color: #f44336;
 }
 
 .comments-section {
-  padding-top: 0.5rem;
-  border-top: 1px solid #fcd6dc;
+  margin-top: 12px;
+  padding-left: 4px;
 }
 
-/* Animation สำหรับแสดง/ซ่อนคอมเมนต์ */
 .comments-wrapper {
-  overflow: hidden;
-  transition: max-height 0.4s ease-in-out;
-}
-
-.comments-wrapper.collapsed {
-  max-height: 200px; /* ปรับให้พอดี 2 คอมเมนต์ */
-}
-
-.comments-wrapper.expanded {
-  max-height: 1000px; /* เพียงพอสำหรับหลายคอมเมนต์ */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .comment {
   display: flex;
   align-items: flex-start;
-  gap: 0.5rem;
-  background-color: #ffeef1;
-  padding: 0.5rem;
-  margin-bottom: 0.4rem;
+  gap: 10px;
+  background-color: #f5f5f5;
+  padding: 10px 12px;
   border-radius: 10px;
-  font-size: 0.95rem;
 }
 
 .comment div {
-  text-align: left;
   flex: 1;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.comment strong {
+  display: block;
+  font-size: 0.88rem;
+  color: #222;
+  margin-bottom: 2px;
 }
 
 .comment-form {
+  
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .comment-form input {
+  font-family: 'Sarabun', cursive;
   flex: 1;
-  padding: 0.4rem 0.6rem;
+  padding: 10px 12px;
+  border-radius: 8px;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  font-size: 1rem;
 }
 
 .comment-form button {
-  background-color: #ffa3b1;
-  color: white;
+  font-family: 'Sarabun', cursive;
+  padding: 10px 16px;
   border: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 10px;
+  background-color: #ffbecd;
+  color: white;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 1rem;
 }
 
 .comment-form button:hover {
-  background-color: #ff8b9e;
+  background-color: #b8f0ff;
 }
 
-/* Delete buttons */
-.delete-post-btn,
-.delete-comment-btn {
-  margin-left: auto;
-  background-color: transparent;
-  border: none;
-  color: #ff6b81;
-  cursor: pointer;
-  font-size: 0.8rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-}
-
-.delete-post-btn:hover,
-.delete-comment-btn:hover {
-  background-color: #ffccd6;
-}
-
-/* Floating post button */
-.floating-post-button {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  background-color: #ff6b81;
-  color: white;
-  border: none;
-  border-radius: 50px;
-  padding: 0.8rem 1.4rem;
-  font-size: 1rem;
-  box-shadow: 0 4px 10px rgba(255, 107, 129, 0.4);
-  cursor: pointer;
-  z-index: 10;
-}
-
-.floating-post-button:hover {
-  background-color: #ff4f69;
-}
-
-/* Modal styles */
 .modal-overlay {
   position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.45);
+  top: 0;
+  left: 0;
+  z-index: 999;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 20;
-  padding: 1rem;
-  box-sizing: border-box;
+  align-items: center;
 }
 
 .modal-content {
   background: white;
-  padding: 2rem;
-  border-radius: 20px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.2s ease-out;
-  position: relative;
-}
-
-.modal-content h2 {
-  margin-top: 0;
-  color: #ff6b81;
-  margin-bottom: 1rem;
-}
-
-.modal-content textarea {
+  padding: 25px;
+  border-radius: 14px;
   width: 90%;
-  min-height: 100px;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 1rem;
+  max-width: 500px;
+}
+
+.post-form textarea {
+  width: 90%;
+  height: 120px;
+  padding: 12px;
   font-size: 1rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
   resize: vertical;
-  margin-bottom: 1rem;
 }
 
 .modal-buttons {
+  margin-top: 15px;
   display: flex;
   justify-content: flex-end;
-  gap: 0.5rem;
+  gap: 10px;
 }
 
 .modal-buttons button {
-  padding: 0.5rem 1rem;
+  font-family: 'Sarabun', cursive;
+  padding: 10px 18px;
+  font-size: 1rem;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
 .modal-buttons button[type="submit"] {
-  background-color: #ff6b81;
+  background-color: #ffbecd;
   color: white;
 }
 
 .modal-buttons button[type="button"] {
   background-color: #ccc;
-  color: white;
+  color: #333;
 }
 
-/* ปุ่มแสดง/ซ่อนคอมเมนต์ */
-.show-more-comments-btn {
-  background: none;
+.floating-post-wrapper {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.floating-post-button {
+  font-family: 'Sarabun', cursive;
+  padding: 14px 24px;
+  font-size: 1rem;
+  background-color: #ffbecd;
+  color: rgb(62, 60, 60);
   border: none;
-  color: #ff6b81;
+  border-radius: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   cursor: pointer;
-  font-size: 0.85rem;
-  padding: 0.3rem 0.5rem;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
-  margin-bottom: 0.5rem;
-  text-align: left;
 }
 
-.show-more-comments-btn:hover {
-  background-color: #ffe6ea;
+.floating-post-button:hover {
+  background-color: #a2deff;
 }
 
-/* Animation fade */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+@media (max-width: 600px) {
+  .post-card {
+    padding: 16px;
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .post-text,
+  .comment div {
+    font-size: 1rem;
+  }
+
+  .comment-form input {
+    font-size: 0.95rem;
+  }
+
+  .comment-form button {
+    padding: 8px 12px;
+    font-size: 0.95rem;
+  }
+
+  .modal-content {
+    padding: 20px;
+  }
+
+  .floating-post-button {
+    padding: 12px 20px;
+    font-size: 0.95rem;
   }
 }

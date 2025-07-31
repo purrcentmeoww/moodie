@@ -1,22 +1,74 @@
-/* src/pages/TimeCapsulePage.css */
-.time-capsule-container {
-  max-width: 700px;
-  margin: auto;
-  padding: 20px;
-  text-align: center;
+/* TimeCapsulePage.css */
+
+body, html {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  height: 100%;
+  overflow-x: hidden;
 }
 
-.capsule-textarea {
+.time-capsule-container {
+  font-family: 'Sriracha', cursive;
+  position: relative;
+  min-height: 100vh;
+  padding: 40px 20px 100px; /* เพิ่ม padding ล่าง */
+  max-width: 900px;
+  margin: 0 auto;
+  z-index: 0;
+  box-sizing: border-box;
+  padding-top: 80px; /* ปรับตามความสูงของ navbar */
+}
+
+/* พื้นหลัง GIF */
+.time-capsule-container::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  background-image: url("/3.gif");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+}
+
+/* กล่องสีขาวที่ห่อ content ทั้งหมด */
+.content-box {
+  border-radius: 16px;
+  padding: 30px;
+  color: #333;
+  text-align: center;
+
+}
+
+/* กล่องข้อความ */
+.capsule-textarea {
+  width: 90%;
   padding: 15px;
   font-size: 1.1rem;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  box-sizing: border-box;
-  margin-top: 10px;
+  border-radius: 10px;
+  border: none;
   resize: vertical;
+  margin-top: 20px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
 
+/* Date Picker */
+.date-picker-input {
+  font-family: 'Sarabun', cursive;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  width: 200px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Controls container */
 .controls-container {
   margin-top: 20px;
   display: flex;
@@ -25,101 +77,130 @@
   gap: 15px;
 }
 
-.controls-container label {
-  font-size: 1.1rem;
-}
-
-.duration-select {
-  padding: 10px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-.seal-button {
-  margin-top: 20px;
-  padding: 12px 25px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #fff;
-  background-color: #28a745; /* สีเขียว */
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.seal-button:hover {
-  background-color: #218838;
-}
-
-.opened-capsules-section {
-  margin-top: 50px;
-  padding-top: 20px;
-  border-top: 1px solid #eee;
-}
-
-/* Style for our new Date Picker input */
-.date-picker-input {
-  padding: 10px;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  text-align: center;
-  width: 200px; /* กำหนดความกว้าง */
-  cursor: pointer;
-}
-
-/* เพิ่มท้ายไฟล์ src/pages/TimeCapsulePage.css */
-.capsule-card {
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 15px;
-  text-align: left;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-}
-.card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 15px;
-  padding-top: 10px;
-  border-top: 1px solid #f0f0f0;
-}
-.compare-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.compare-button:hover {
-  background-color: #0056b3;
-}
-
-/* src/pages/TimeCapsulePage.css */
-
+/* ปุ่ม */
 .button-group {
   margin-top: 20px;
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 15px;
 }
 
-.test-button {
+.seal-button, .test-button {
+  font-family: 'Sarabun', sans-serif;
   padding: 12px 25px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #fff;
-  background-color: #6c757d; /* สีเทา */
+  font-size: 1.1rem;
+  color: #2f2f2f;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+.seal-button {
+  background-color: #80ccff;
+}
+
+.seal-button:hover {
+  background-color: #ffb8e1;
+}
+
+.test-button {
+  background-color: #f1ff95;
 }
 
 .test-button:hover {
-  background-color: #5a6268;
+  background-color: #ffb5d2;
+}
+
+/* กล่อง capsule */
+.opened-capsules-section {
+  margin-top: 50px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.capsule-card {
+  
+  background-color: rgba(255, 255, 255, 0.85); /* กล่องขาวโปร่งแสง */
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* เงานุ่มๆ */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.capsule-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.capsule-text {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+.card-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.compare-button {
+  font-family: 'Sarabun', sans-serif;
+  background-color: #ffa8db;
+  color: rgb(43, 43, 43);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.compare-button:hover {
+  color : white;
+  background-color: #e8a9ff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .capsule-card {
+    padding: 15px;
+  }
+
+  .seal-button, .test-button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .controls-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .date-picker-input {
+    width: 100%;
+  }
+
+  .capsule-textarea {
+    font-size: 1rem;
+    padding: 12px;
+  }
+
+  .content-box {
+    margin-top: 30px;
+  }
+}
+/* เพิ่มเติมที่ท้ายไฟล์ */
+.capsule-card.opened {
+  background: rgba(255, 255, 255, 0.85);
+  border-left: 5px solid #ffb5d2;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.3s ease-in-out;
 }

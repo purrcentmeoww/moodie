@@ -1,15 +1,15 @@
 // src/App.jsx
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-
 import Navbar from './components/layout/Navbar';
 import Home from './pages/Home'; // หน้าแรกให้กรอกชื่อ
 import TimeCapsulePage from './pages/TimeCapsulePage';
 import EmpathyWallPage from './pages/EmpathyWallPage';
 import CalendarPage from './pages/CalendarPage';
 import HomePage from './pages/Homepage'; // สำหรับ analyze
-
 import './App.css';
+
+
 
 function App() {
   const [username, setUsername] = useState('');

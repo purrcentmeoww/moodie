@@ -5,7 +5,7 @@ import { th } from "date-fns/locale/th";
 import "react-datepicker/dist/react-datepicker.css";
 import "./TimeCapsulePage.css";
 import { mockAnalyzeMoodAPI } from "../api/analysisAPI";
-import CapsuleComparisonView from "../components/ui/CapsuleComparisonView"; // <-- Import เข้ามา
+import CapsuleComparisonView from "../components/ui/CapsuleComparisonView";
 
 registerLocale("th", th);
 
@@ -16,10 +16,9 @@ function TimeCapsulePage() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [pendingCapsules, setPendingCapsules] = useState([]);
   const [openedCapsules, setOpenedCapsules] = useState([]);
-  const [viewingCapsule, setViewingCapsule] = useState(null); // <-- เพิ่ม State นี้
+  const [viewingCapsule, setViewingCapsule] = useState(null);
 
   useEffect(() => {
-    // ... (โค้ดส่วนนี้เหมือนเดิมทุกประการ)
     const storedCapsules =
       JSON.parse(localStorage.getItem(CAPSULES_STORAGE_KEY)) || [];
     const now = new Date();
@@ -46,6 +45,37 @@ function TimeCapsulePage() {
     localStorage.setItem(CAPSULES_STORAGE_KEY, JSON.stringify(stillPending));
   }, []);
 
+  useEffect(() => {
+    const checkAndOpenCapsules = () => {
+      const storedCapsules =
+        JSON.parse(localStorage.getItem(CAPSULES_STORAGE_KEY)) || [];
+      const now = new Date();
+      const stillPending = [];
+      const justOpened = [];
+
+      storedCapsules.forEach((capsule) => {
+        if (new Date(capsule.openDate) <= now) {
+          justOpened.push(capsule);
+        } else {
+          stillPending.push(capsule);
+        }
+      });
+
+      if (justOpened.length > 0) {
+        setOpenedCapsules((prevOpened) =>
+          [...prevOpened, ...justOpened].sort(
+            (a, b) => new Date(b.openDate) - new Date(a.openDate)
+          )
+        );
+        setPendingCapsules(stillPending);
+        localStorage.setItem(CAPSULES_STORAGE_KEY, JSON.stringify(stillPending));
+      }
+    };
+
+    checkAndOpenCapsules();
+    const interval = setInterval(checkAndOpenCapsules, 10000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSealCapsule = async () => {
     if (!text.trim()) {
@@ -84,11 +114,6 @@ function TimeCapsulePage() {
     setSelectedDate(null);
   };
 
-  if (viewingCapsule) {
-    return <CapsuleComparisonView capsule={viewingCapsule} onBack={() => setViewingCapsule(null)} />;
-  }
-
-  // --- ฟังก์ชันใหม่สำหรับปุ่มทดสอบ ---
   const handleTestSeal = async () => {
     if (!text.trim()) {
       alert("กรุณาพิมพ์ข้อความสำหรับทดสอบก่อนนะ!");
@@ -97,7 +122,6 @@ function TimeCapsulePage() {
 
     const analysis = await mockAnalyzeMoodAPI(text);
     const now = new Date();
-    // ตั้งเวลาเปิดในอีก 1 นาทีข้างหน้า
     const openDate = new Date(now.getTime() + 1 * 60 * 1000);
 
     const newCapsule = {
@@ -123,11 +147,17 @@ function TimeCapsulePage() {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
 
-  // ... (โค้ดส่วน if (viewingCapsule) { ... } เหมือนเดิม)
+  if (viewingCapsule) {
+    return (
+      <CapsuleComparisonView
+        capsule={viewingCapsule}
+        onBack={() => setViewingCapsule(null)}
+      />
+    );
+  }
 
   return (
-    <div className="time-capsule-container">
-      {/* ... (ส่วนหัวเรื่องและ textarea เหมือนเดิม) ... */}
+    <div className="time-capsule-container" style={{ overflowY: "auto", maxHeight: "100vh" }}>
       <h1>สร้างแคปซูลเวลาอารมณ์</h1>
       <p>
         เขียนบันทึกที่นึกถึงคุณค่ามากมายอย่างดีอาจสามารถกลับไปหาคุณเมื่อถึงเวลา
@@ -151,8 +181,6 @@ function TimeCapsulePage() {
           placeholderText="คลิกเพื่อเลือกวันที่"
         />
       </div>
-
-      {/* --- แก้ไขส่วนปุ่ม --- */}
       <div className="button-group">
         <button className="seal-button" onClick={handleSealCapsule}>
           ผนึกแคปซูลเวลา
@@ -161,8 +189,6 @@ function TimeCapsulePage() {
           ทดสอบ (1 นาที)
         </button>
       </div>
-
-      {/* ... (ส่วนแสดง opened capsules เหมือนเดิม) ... */}
       <div className="opened-capsules-section">
         <h2>แคปซูลที่เปิดแล้ว</h2>
         {openedCapsules.length === 0 ? (
@@ -174,7 +200,7 @@ function TimeCapsulePage() {
                 <p className="capsule-text">"{capsule.text}"</p>
                 <div className="card-footer">
                   <small className="capsule-date">
-                    เขียนเมื่อ:{" "}
+                    เขียนเมื่อ: {" "}
                     {new Date(capsule.createdAt).toLocaleDateString("th-TH")}
                   </small>
                   <button
