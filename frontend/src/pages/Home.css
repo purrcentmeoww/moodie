@@ -1,0 +1,90 @@
+.home-container {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column; /* เปลี่ยนจาก row เป็น column */
+  justify-content: flex-end; /* ชิดด้านล่าง */
+  align-items: center;
+  overflow: hidden;
+  background-color: #ffc7e5;
+  padding: 100px;
+  box-sizing: border-box;
+}
+
+
+/* ภาพพื้นหลังแบบเต็มจอ */
+.background-image {
+  position: absolute;
+  top: 0;
+
+  width: 100%;
+  height: 100%;
+  background-image: url("/1.gif");
+  background-repeat: repeat;
+  background-position: center;
+  background-size: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* เนื้อหา */
+.home-content {
+  position: relative;
+  z-index: 1;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0); /* transparent */
+  box-sizing: border-box;
+}
+
+/* ตัวหนังสือหัวข้อ */
+.home-content h2 {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+  color: #333;
+}
+
+/* คำถาม */
+.home-content p {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+}
+
+/* Input */
+.home-content input {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 30px;
+  width: 100%;
+  font-size: 16px;
+  outline: none;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ปุ่ม */
+.submit-button {
+  background-color: white;
+  color: #333;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 30px;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #f3f3f3;
+}

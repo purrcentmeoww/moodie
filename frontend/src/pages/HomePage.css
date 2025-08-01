@@ -1,0 +1,73 @@
+/* src/pages/HomePage.css */
+.homepage-container {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+  padding-top: 80px; /* ปรับตามความสูงของ navbar */
+}
+
+.text-input {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-sizing: border-box; /* สำคัญมาก! */
+  margin-top: 10px;
+  resize: vertical;
+}
+
+.analyze-button {
+  margin-top: 20px;
+  padding: 12px 25px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.analyze-button:hover {
+  background-color: #0056b3;
+}
+
+.analyze-button:disabled {
+  background-color: #a0a0a0;
+  cursor: not-allowed;
+}
+
+.results-container {
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.primary-emotion {
+  font-size: 1.5rem;
+}
+
+.primary-emotion span {
+  font-weight: bold;
+  color: #007bff;
+  text-transform: capitalize;
+}
+
+.loading-spinner {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin: 40px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
