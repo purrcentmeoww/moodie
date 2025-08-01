@@ -32,12 +32,21 @@ const EmpathyWallPage = () => {
   const fetchPosts = async () => {
     try {
       const dataFromApi = await getPosts();
-      const postsWithExtras = dataFromApi.map((post) => ({
-        ...post,
-        ...avatars[Math.floor(Math.random() * avatars.length)],
-        comments: [], 
-        commentsLoaded: false,
-      }));
+      const postsWithExtras = await Promise.all(
+        dataFromApi.map(async (post) => {
+          const commentsData = await getComments(post.id);
+          const commentsWithAvatars = commentsData.map(comment => ({
+            ...comment,
+            ...avatars[Math.floor(Math.random() * avatars.length)],
+          }));
+          return {
+            ...post,
+            ...avatars[Math.floor(Math.random() * avatars.length)],
+            comments: commentsWithAvatars,
+            commentsLoaded: true,
+          };
+        })
+      );
       setPosts(postsWithExtras);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -45,6 +54,7 @@ const EmpathyWallPage = () => {
       setIsLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchPosts();
@@ -169,11 +179,24 @@ const EmpathyWallPage = () => {
                       </div>
                     ))}
                   </div>
-                  {(post.comments.length > 2 || !post.commentsLoaded) && (
-                    <button className="show-more-comments-btn" onClick={() => toggleShowAllComments(post.id)}>
-                      {isExpanded ? "ซ่อนคอมเมนต์" : "แสดงคอมเมนต์เพิ่มเติม..."}
-                    </button>
-                  )}
+                  {(post.comments.length > 0 && (post.comments.length > 2 || !post.commentsLoaded)) && (
+  <button
+    className={`show-more-comments-btn ${isExpanded ? "expanded" : ""}`}
+    onClick={() => toggleShowAllComments(post.id)}
+  >
+    {isExpanded ? (
+      <>
+        🔼 <span>ซ่อนคอมเมนต์</span>
+      </>
+    ) : (
+      <>
+        🔽 <span>ดูคอมเมนต์ทั้งหมด ({post.comments.length})</span>
+      </>
+    )}
+  </button>
+)}
+
+
                   <form
                     onSubmit={(e) => {
                       const form = e.target;

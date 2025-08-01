@@ -59,6 +59,13 @@ h2 {
   font-weight: bold;
   box-shadow: 0 0 8px rgba(255, 181, 108, 0.7);
 }
+.current-day {
+  border: 2px solid #ffa500;
+  font-weight: bold;
+  box-shadow: 0 0 10px rgba(255, 165, 0, 0.8);
+  background-color: #fff7e6;
+}
+
 
 .entry-box {
   font-family: 'Sriracha', cursive;

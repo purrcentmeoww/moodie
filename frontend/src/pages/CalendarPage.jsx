@@ -25,21 +25,25 @@ function CalendarPage({ username, userId }) {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
+  const today = new Date();
+  const isToday = (day) =>
+    today.getDate() === day &&
+    today.getMonth() === currentMonth &&
+    today.getFullYear() === currentYear;
+
   const fetchEntries = async () => {
     if (!userId) return;
     try {
       const dataFromApi = await getCalendarEntries(userId);
       const entriesObject = {};
       dataFromApi.forEach(entry => {
-        // *** แก้ไขเรื่อง Timezone ตอนดึงข้อมูล ***
-        // MySQL จะคืนค่าเวลามาเป็น UTC, เราต้องบวกกลับเพื่อให้เป็นวันที่ของไทย
         const entryDate = new Date(entry.entry_date);
         const userTimezoneOffset = entryDate.getTimezoneOffset() * 60000;
         const localDate = new Date(entryDate.getTime() + userTimezoneOffset);
 
         if (localDate.getMonth() === currentMonth && localDate.getFullYear() === currentYear) {
-            const day = localDate.getDate();
-            entriesObject[day] = { text: entry.text_content, mood: entry.mood };
+          const day = localDate.getDate();
+          entriesObject[day] = { text: entry.text_content, mood: entry.mood };
         }
       });
       setEntries(entriesObject);
@@ -56,13 +60,10 @@ function CalendarPage({ username, userId }) {
     if (!text.trim() || !selectedDay || !userId) return;
 
     const mood = await mockAnalyzeMoodAPI(text);
-    
-    // --- จุดที่แก้ไข ---
-    // สร้างวันที่โดยไม่สนใจเวลาและโซนเวลา เพื่อให้ได้วันที่ที่ถูกต้องเสมอ
     const year = currentYear;
-    const month = (currentMonth + 1).toString().padStart(2, '0'); // เดือนต้อง +1 และมีเลข 2 หลัก
-    const day = selectedDay.toString().padStart(2, '0'); // วันที่ต้องมีเลข 2 หลัก
-    const dateString = `${year}-${month}-${day}`; // ผลลัพธ์: "2025-08-02"
+    const month = (currentMonth + 1).toString().padStart(2, '0');
+    const day = selectedDay.toString().padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
 
     const entryData = {
       userId: userId,
@@ -84,7 +85,7 @@ function CalendarPage({ username, userId }) {
       alert("ไม่สามารถบันทึกข้อมูลได้");
     }
   };
-  
+
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
 
@@ -96,10 +97,10 @@ function CalendarPage({ username, userId }) {
         {days.map((day) => (
           <div
             key={day}
-            className="day"
+            className={`day ${isToday(day) ? 'current-day' : ''}`}
             onClick={() => {
-                setSelectedDay(day);
-                setText(entries[day]?.text || '');
+              setSelectedDay(day);
+              setText(entries[day]?.text || '');
             }}
             style={{ backgroundColor: entries[day]?.mood ? moodColors[entries[day].mood] : '#fff' }}
           >
