@@ -11,7 +11,7 @@ COPY requirements.txt .
 
 # 4. ติดตั้ง library ที่จำเป็นทั้งหมด
 # เราจะติดตั้ง torch แยกก่อนเพื่อความเสถียร
-RUN pip install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cpu
+RUN pip install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 5. คัดลอกไฟล์โปรเจกต์ทั้งหมดเข้าไปในบ้าน

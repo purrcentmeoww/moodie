@@ -39,7 +39,7 @@ const logActivity = async (userId, action, details = null) => {
 
 // --- API สำหรับ Empathy Wall ---
 
-// 1. API สำหรับดึงโพสต์ทั้งหมด (GET)
+// 1. API สำหรับดึงโพสต์ทั้งหมด (GET) *
 app.get("/api/posts", async (req, res) => {
   let connection;
   try {
@@ -69,7 +69,7 @@ app.get("/api/posts", async (req, res) => {
   }
 });
 
-// 2. API สำหรับสร้างโพสต์ใหม่ (POST)
+// 2. API สำหรับสร้างโพสต์ใหม่ (POST) *
 app.post("/api/posts", async (req, res) => {
   const { text, userId } = req.body;
   if (!text || !userId) {
@@ -78,11 +78,11 @@ app.post("/api/posts", async (req, res) => {
   let connection;
   try {
     connection = await mysql.createConnection(dbConfig);
-    // เพิ่ม user_id เข้าไปตอน INSERT
     const [result] = await connection.execute(
       "INSERT INTO empathy_posts (text_content, user_id) VALUES (?, ?)",
       [text, userId]
     );
+    await logActivity(userId, "CREATE_POST", { postId: result.insertId }); // <-- บันทึก Log
     res.status(201).json({ message: "Post created!", postId: result.insertId });
   } catch (error) {
     console.error("Error creating post:", error);
@@ -103,7 +103,7 @@ app.post("/api/posts", async (req, res) => {
 
 // /backend/server.js
 
-// 3. API สำหรับดึงคอมเมนต์ทั้งหมดของโพสต์เดียว (GET)
+// 3. API สำหรับดึงคอมเมนต์ทั้งหมดของโพสต์เดียว (GET) *
 app.get("/api/posts/:postId/comments", async (req, res) => {
     const { postId } = req.params;
     let connection;
@@ -126,7 +126,7 @@ app.get("/api/posts/:postId/comments", async (req, res) => {
     }
 });
 
-// 4. API สำหรับสร้างคอมเมนต์ใหม่ (POST)
+// 4. API สำหรับสร้างคอมเมนต์ใหม่ (POST) *
 app.post("/api/posts/:postId/comments", async (req, res) => {
     const { postId } = req.params;
     const { text, userId } = req.body;
@@ -149,6 +149,7 @@ app.post("/api/posts/:postId/comments", async (req, res) => {
     }
 });
 
+// *
 app.delete('/api/comments/:commentId', async (req, res) => {
     const { commentId } = req.params;
     const { userId } = req.body;
@@ -180,7 +181,7 @@ app.delete('/api/comments/:commentId', async (req, res) => {
     }
 });
 
-// 5. API สำหรับลบโพสต์ (DELETE)
+// 5. API สำหรับลบโพสต์ (DELETE) *
 app.delete("/api/posts/:postId", async (req, res) => {
   const { postId } = req.params;
   const { userId } = req.body; // รับ userId ของคนที่กดลบ
@@ -226,7 +227,7 @@ app.delete("/api/posts/:postId", async (req, res) => {
 
 // --- API ที่อัปเกรดแล้ว ---
 
-// API User Login
+// API User Login *
 app.post("/api/users/login", async (req, res) => {
   const { username } = req.body;
   if (!username) return res.status(400).json({ error: "Username is required" });
@@ -259,30 +260,7 @@ app.post("/api/users/login", async (req, res) => {
   }
 });
 
-// API สร้างโพสต์
-app.post("/api/posts", async (req, res) => {
-  // **สำคัญ:** เราต้องรู้ว่าใครเป็นคนโพสต์เพื่อบันทึก Log
-  const { text, userId } = req.body;
-  if (!text || !userId) {
-    return res.status(400).json({ error: "Text and userId are required" });
-  }
-  let connection;
-  try {
-    connection = await mysql.createConnection(dbConfig);
-    const [result] = await connection.execute(
-      "INSERT INTO empathy_posts (text_content) VALUES (?)",
-      [text]
-    );
-    await logActivity(userId, "CREATE_POST", { postId: result.insertId }); // <-- บันทึก Log
-    res.status(201).json({ message: "Post created!", postId: result.insertId });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create post" });
-  } finally {
-    if (connection) await connection.end();
-  }
-});
-
-// 1. API สำหรับสร้างแคปซูลใหม่ (POST)
+// 1. API สำหรับสร้างแคปซูลใหม่ (POST) *
 app.post("/api/capsules", async (req, res) => {
   const { userId, text, openDate, pastAnalysis } = req.body;
 
@@ -321,7 +299,7 @@ app.post("/api/capsules", async (req, res) => {
   }
 });
 
-// 2. API สำหรับดึงแคปซูลทั้งหมดของ User คนเดียว (GET)
+// 2. API สำหรับดึงแคปซูลทั้งหมดของ User คนเดียว (GET) *
 app.get("/api/users/:userId/capsules", async (req, res) => {
   const { userId } = req.params;
   let connection;
@@ -340,7 +318,7 @@ app.get("/api/users/:userId/capsules", async (req, res) => {
   }
 });
 
-// --- API Calendar Entries ---
+// --- API Calendar Entries --- *
 app.get("/api/users/:userId/calendar-entries", async (req, res) => {
   const { userId } = req.params;
   let connection;
@@ -358,7 +336,7 @@ app.get("/api/users/:userId/calendar-entries", async (req, res) => {
     if (connection) await connection.end();
   }
 });
-
+// *
 app.post("/api/calendar-entries", async (req, res) => {
   const { userId, date, text, mood } = req.body;
   if (!userId || !date || !text || !mood) {
