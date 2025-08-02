@@ -44,10 +44,23 @@ app.get("/api/posts", async (req, res) => {
   let connection;
   try {
     connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.execute(
-      "SELECT * FROM empathy_posts ORDER BY created_at DESC" // ดึงข้อมูลทั้งหมด เรียงตามเวลาล่าสุด
-    );
-    res.json(rows); // ส่งข้อมูลกลับไปเป็น JSON
+    // Query ใหม่ที่ซับซ้อนขึ้น:
+    // 1. JOIN กับตาราง users เพื่อเอา username มาด้วย
+    // 2. ใช้ Subquery เพื่อนับจำนวนคอมเมนต์ (comment_count) ของแต่ละโพสต์
+    const sql = `
+        SELECT 
+            p.*, 
+            u.username,
+            (SELECT COUNT(*) FROM empathy_comments c WHERE c.post_id = p.id) as comment_count
+        FROM 
+            empathy_posts p
+        LEFT JOIN 
+            users u ON p.user_id = u.id
+        ORDER BY 
+            p.created_at DESC;
+    `;
+    const [rows] = await connection.execute(sql);
+    res.json(rows);
   } catch (error) {
     console.error("Error fetching posts:", error);
     res.status(500).json({ error: "Failed to fetch posts" });
@@ -58,22 +71,19 @@ app.get("/api/posts", async (req, res) => {
 
 // 2. API สำหรับสร้างโพสต์ใหม่ (POST)
 app.post("/api/posts", async (req, res) => {
-  const { text } = req.body; // ดึงข้อความจาก body ที่ส่งมา
-
-  if (!text) {
-    return res.status(400).json({ error: "Text content is required" });
+  const { text, userId } = req.body;
+  if (!text || !userId) {
+    return res.status(400).json({ error: "Text and userId are required" });
   }
-
   let connection;
   try {
     connection = await mysql.createConnection(dbConfig);
+    // เพิ่ม user_id เข้าไปตอน INSERT
     const [result] = await connection.execute(
-      "INSERT INTO empathy_posts (text_content) VALUES (?)", // ใช้ ? เพื่อความปลอดภัย
-      [text] // ส่งค่า text เข้าไปแทนที่ ?
+      "INSERT INTO empathy_posts (text_content, user_id) VALUES (?, ?)",
+      [text, userId]
     );
-    res
-      .status(201)
-      .json({ message: "Post created successfully!", postId: result.insertId });
+    res.status(201).json({ message: "Post created!", postId: result.insertId });
   } catch (error) {
     console.error("Error creating post:", error);
     res.status(500).json({ error: "Failed to create post" });
@@ -95,70 +105,116 @@ app.post("/api/posts", async (req, res) => {
 
 // 3. API สำหรับดึงคอมเมนต์ทั้งหมดของโพสต์เดียว (GET)
 app.get("/api/posts/:postId/comments", async (req, res) => {
-  const { postId } = req.params;
-  console.log(`[LOG] Received request for comments on post ID: ${postId}`); // <-- LOG ที่ 1
-
-  let connection;
-  try {
-    connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.execute(
-      "SELECT * FROM empathy_comments WHERE post_id = ? ORDER BY created_at ASC",
-      [postId]
-    );
-    res.json(rows);
-  } catch (error) {
-    console.error(
-      `[ERROR] SQL Error fetching comments for post ${postId}:`,
-      error
-    ); // <-- LOG ที่ 2
-    res.status(500).json({ error: "Failed to fetch comments" });
-  } finally {
-    if (connection) await connection.end();
-  }
+    const { postId } = req.params;
+    let connection;
+    try {
+        connection = await mysql.createConnection(dbConfig);
+        // **แก้ไข:** JOIN กับตาราง users เพื่อเอา user_id และ username มาด้วย
+        const sql = `
+            SELECT c.*, u.username 
+            FROM empathy_comments c
+            LEFT JOIN users u ON c.user_id = u.id
+            WHERE c.post_id = ? 
+            ORDER BY c.created_at ASC
+        `;
+        const [rows] = await connection.execute(sql, [postId]);
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch comments' });
+    } finally {
+        if (connection) await connection.end();
+    }
 });
 
 // 4. API สำหรับสร้างคอมเมนต์ใหม่ (POST)
 app.post("/api/posts/:postId/comments", async (req, res) => {
-  const { postId } = req.params;
-  const { text } = req.body;
+    const { postId } = req.params;
+    const { text, userId } = req.body;
+    if (!text || !userId) {
+        return res.status(400).json({ error: "Text and userId are required" });
+    }
+    let connection;
+    try {
+        connection = await mysql.createConnection(dbConfig);
+        // **แก้ไข:** เพิ่ม user_id เข้าไปตอน INSERT
+        const [result] = await connection.execute(
+            'INSERT INTO empathy_comments (post_id, text_content, user_id) VALUES (?, ?, ?)',
+            [postId, text, userId]
+        );
+        res.status(201).json({ message: "Comment created!", commentId: result.insertId });
+    } catch (error) {
+        res.status(500).json({ error: "Failed to create comment" });
+    } finally {
+        if (connection) await connection.end();
+    }
+});
 
-  if (!text) {
-    return res.status(400).json({ error: "Text content is required" });
-  }
+app.delete('/api/comments/:commentId', async (req, res) => {
+    const { commentId } = req.params;
+    const { userId } = req.body;
 
-  let connection;
-  try {
-    connection = await mysql.createConnection(dbConfig);
-    const [result] = await connection.execute(
-      "INSERT INTO empathy_comments (post_id, text_content) VALUES (?, ?)",
-      [postId, text]
-    );
-    res.status(201).json({
-      message: "Comment created successfully!",
-      commentId: result.insertId,
-    });
-  } catch (error) {
-    console.error(`Error creating comment for post ${postId}:`, error);
-    res.status(500).json({ error: "Failed to create comment" });
-  } finally {
-    if (connection) await connection.end();
-  }
+    if (!userId) {
+        return res.status(400).json({ error: 'userId is required' });
+    }
+
+    let connection;
+    try {
+        connection = await mysql.createConnection(dbConfig);
+        const [rows] = await connection.execute('SELECT user_id FROM empathy_comments WHERE id = ?', [commentId]);
+        
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Comment not found' });
+        }
+
+        if (rows[0].user_id !== userId) {
+            return res.status(403).json({ error: 'Forbidden: You can only delete your own comments' });
+        }
+
+        await connection.execute('DELETE FROM empathy_comments WHERE id = ?', [commentId]);
+        res.status(200).json({ message: 'Comment deleted successfully' });
+
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete comment' });
+    } finally {
+        if (connection) await connection.end();
+    }
 });
 
 // 5. API สำหรับลบโพสต์ (DELETE)
 app.delete("/api/posts/:postId", async (req, res) => {
   const { postId } = req.params;
+  const { userId } = req.body; // รับ userId ของคนที่กดลบ
+
+  if (!userId) {
+    return res.status(400).json({ error: "userId is required" });
+  }
+
   let connection;
   try {
     connection = await mysql.createConnection(dbConfig);
-    // เนื่องจากเราตั้งค่า ON DELETE CASCADE ไว้
-    // เมื่อลบโพสต์ คอมเมนต์ทั้งหมดที่เกี่ยวข้องจะถูกลบไปด้วย
+    // 1. ตรวจสอบก่อนว่าโพสต์นี้เป็นของ user คนนี้จริงหรือไม่
+    const [rows] = await connection.execute(
+      "SELECT user_id FROM empathy_posts WHERE id = ?",
+      [postId]
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    const postOwnerId = rows[0].user_id;
+    if (postOwnerId !== userId) {
+      // ถ้า ID ไม่ตรงกัน -> ไม่อนุญาตให้ลบ
+      return res
+        .status(403)
+        .json({ error: "Forbidden: You can only delete your own posts" });
+    }
+
+    // 2. ถ้าเป็นเจ้าของจริง -> อนุญาตให้ลบ
     await connection.execute("DELETE FROM empathy_posts WHERE id = ?", [
       postId,
     ]);
-    res
-      .status(200)
-      .json({ message: "Post and related comments deleted successfully" });
+    res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
     console.error(`Error deleting post ${postId}:`, error);
     res.status(500).json({ error: "Failed to delete post" });
@@ -167,23 +223,6 @@ app.delete("/api/posts/:postId", async (req, res) => {
   }
 });
 
-// 6. API สำหรับลบคอมเมนต์ (DELETE)
-app.delete("/api/comments/:commentId", async (req, res) => {
-  const { commentId } = req.params;
-  let connection;
-  try {
-    connection = await mysql.createConnection(dbConfig);
-    await connection.execute("DELETE FROM empathy_comments WHERE id = ?", [
-      commentId,
-    ]);
-    res.status(200).json({ message: "Comment deleted successfully" });
-  } catch (error) {
-    console.error(`Error deleting comment ${commentId}:`, error);
-    res.status(500).json({ error: "Failed to delete comment" });
-  } finally {
-    if (connection) await connection.end();
-  }
-});
 
 // --- API ที่อัปเกรดแล้ว ---
 
@@ -302,47 +341,49 @@ app.get("/api/users/:userId/capsules", async (req, res) => {
 });
 
 // --- API Calendar Entries ---
-app.get('/api/users/:userId/calendar-entries', async (req, res) => {
-    const { userId } = req.params;
-    let connection;
-    try {
-        connection = await mysql.createConnection(dbConfig);
-        const [rows] = await connection.execute(
-            'SELECT * FROM calendar_entries WHERE user_id = ?',
-            [userId]
-        );
-        res.json(rows);
-    } catch (error) {
-        console.error(`Error fetching calendar entries for user ${userId}:`, error);
-        res.status(500).json({ error: 'Failed to fetch entries' });
-    } finally {
-        if (connection) await connection.end();
-    }
+app.get("/api/users/:userId/calendar-entries", async (req, res) => {
+  const { userId } = req.params;
+  let connection;
+  try {
+    connection = await mysql.createConnection(dbConfig);
+    const [rows] = await connection.execute(
+      "SELECT * FROM calendar_entries WHERE user_id = ?",
+      [userId]
+    );
+    res.json(rows);
+  } catch (error) {
+    console.error(`Error fetching calendar entries for user ${userId}:`, error);
+    res.status(500).json({ error: "Failed to fetch entries" });
+  } finally {
+    if (connection) await connection.end();
+  }
 });
 
-app.post('/api/calendar-entries', async (req, res) => {
-    const { userId, date, text, mood } = req.body;
-    if (!userId || !date || !text || !mood) {
-        return res.status(400).json({ error: 'userId, date, text, and mood are required' });
-    }
-    let connection;
-    try {
-        connection = await mysql.createConnection(dbConfig);
-        const sql = `
+app.post("/api/calendar-entries", async (req, res) => {
+  const { userId, date, text, mood } = req.body;
+  if (!userId || !date || !text || !mood) {
+    return res
+      .status(400)
+      .json({ error: "userId, date, text, and mood are required" });
+  }
+  let connection;
+  try {
+    connection = await mysql.createConnection(dbConfig);
+    const sql = `
             INSERT INTO calendar_entries (user_id, entry_date, text_content, mood)
             VALUES (?, ?, ?, ?)
             ON DUPLICATE KEY UPDATE
             text_content = VALUES(text_content),
             mood = VALUES(mood);
         `;
-        await connection.execute(sql, [userId, date, text, mood]);
-        res.status(200).json({ message: 'Entry saved successfully' });
-    } catch (error) {
-        console.error("Error saving calendar entry:", error);
-        res.status(500).json({ error: 'Failed to save entry' });
-    } finally {
-        if (connection) await connection.end();
-    }
+    await connection.execute(sql, [userId, date, text, mood]);
+    res.status(200).json({ message: "Entry saved successfully" });
+  } catch (error) {
+    console.error("Error saving calendar entry:", error);
+    res.status(500).json({ error: "Failed to save entry" });
+  } finally {
+    if (connection) await connection.end();
+  }
 });
 
 app.listen(port, () => {
