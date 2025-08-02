@@ -1,4 +1,5 @@
 version: "3.8"
+
 services:
   backend:
     build: ./backend
@@ -12,7 +13,7 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: database_mqsql
+    container_name: database_mysql
     restart: always
     environment:
       MYSQL_DATABASE: "moodie_db"
@@ -36,11 +37,20 @@ services:
     depends_on:
       - db
 
-  # --- Service ใหม่สำหรับ AI ---
   ai_service:
-    build: ./backend_ai # สั่งให้สร้างบ้านจากพิมพ์เขียวในโฟลเดอร์ backend_ai
+    build: ./backend_ai
+    container_name: team20-llm-engine
     ports:
-      - "3030:3030" # แมพ Port 3030 ของ AI กับเครื่องของเรา
+      - "3000:3030"
+    volumes:
+      - example-root:/root
+      - example-data:/app/models
+    environment:
+      - MODEL_PATH=/app/models/model_weights_64acc.pth
 
 volumes:
   mysql_data:
+  example-root:
+    external: true
+  example-data:
+    external: true

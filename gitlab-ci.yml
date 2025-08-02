@@ -1,0 +1,50 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  DOCKER_IMAGE_NAME: team20-llm-engine
+  HOST_PORT: 3000
+  CONTAINER_PORT: 3030
+
+before_script:
+  - echo "🔧 Preparing CI/CD pipeline..."
+
+build-image:
+  stage: build
+  script:
+    - echo "🚀 Building Docker image..."
+    - docker build -t $DOCKER_IMAGE_NAME ./backend_ai || { echo "❌ Docker build failed"; exit 1; }
+
+test-image:
+  stage: test
+  script:
+    - echo "🧪 Running container for testing..."
+    - docker run -d -p $HOST_PORT:$CONTAINER_PORT --name test-$DOCKER_IMAGE_NAME $DOCKER_IMAGE_NAME
+    - sleep 3  # wait for container to boot
+    - echo "📡 Hitting /predict API..."
+    - |
+      if curl -s -X POST http://localhost:$HOST_PORT/predict \
+        -H "Content-Type: application/json" \
+        -d '{"text":"ฉันมีความสุขมาก"}' | grep -q "predicted_label"
+      then
+        echo "✅ API test passed"
+      else
+        echo "❌ API test failed"
+        docker logs test-$DOCKER_IMAGE_NAME
+        exit 1
+      fi
+    - docker stop test-$DOCKER_IMAGE_NAME
+    - docker rm test-$DOCKER_IMAGE_NAME
+
+deploy-service:
+  stage: deploy
+  script:
+    - echo "📦 Deploying container..."
+    - docker-compose down || true  # ไม่ล้มแม้ stop ไม่สำเร็จ
+    - docker-compose up -d --build || { echo "❌ Docker Compose deploy failed"; exit 1; }
+    - echo "✅ Deployment completed"
+
+tags:
+  - hackathon-siamai4
