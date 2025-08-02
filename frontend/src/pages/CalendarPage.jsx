@@ -24,6 +24,7 @@ const analyzeMoodFromEmoNews = async (text) => {
     const data = await response.json();
     if (data.status === 'success') {
       const result = data.result;
+      console.log(result);
       const topMood = Object.entries(result).reduce((max, curr) => curr[1] > max[1] ? curr : max);
       return topMood[0];
     } else {
