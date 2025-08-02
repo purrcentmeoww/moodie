@@ -30,6 +30,7 @@ function Navbar({ onLogout }) {
         <Link to="/analyze" onClick={() => setMenuOpen(false)}>Analyze</Link>
         <Link to="/time-capsule" onClick={() => setMenuOpen(false)}>Time Capsule</Link>
         <Link to="/empathy-wall" onClick={() => setMenuOpen(false)}>Empathy Wall</Link>
+        <Link to="/Check" onClick={() => setMenuOpen(false)}>Check</Link>
         <button onClick={handleLogout} className="logout-button">
           Logout
         </button>

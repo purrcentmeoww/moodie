@@ -1,8 +1,8 @@
-// /frontend/src/pages/CalendarPage.jsx
 import React, { useState, useEffect } from 'react';
 import './CalendarPage.css';
 import { getCalendarEntries, saveCalendarEntry } from '../services/calendarService';
 
+// 🔹 วิเคราะห์อารมณ์เพื่อ "สีพื้นหลัง"
 const mockAnalyzeMoodAPI = async (text) => {
   const lowerText = text.toLowerCase();
   if (lowerText.includes('ดี') || lowerText.includes('สุข') || lowerText.includes('สนุก')) return 'happy';
@@ -11,11 +11,48 @@ const mockAnalyzeMoodAPI = async (text) => {
   return 'neutral';
 };
 
+// 🔹 วิเคราะห์อารมณ์เพื่อ "อิโมจิ"
+const analyzeMoodFromEmoNews = async (text) => {
+  try {
+    const response = await fetch(`https://api.aiforthai.in.th/emonews/prediction?text=${encodeURIComponent(text)}`, {
+      method: 'GET',
+      headers: {
+        'Apikey': '8TBRAeVIBte0eOgiDLCvuaeldsIgoMbP'
+      }
+    });
+
+    const data = await response.json();
+    if (data.status === 'success') {
+      const result = data.result;
+      const topMood = Object.entries(result).reduce((max, curr) => curr[1] > max[1] ? curr : max);
+      return topMood[0];
+    } else {
+      console.error('API error:', data);
+      return 'neutral';
+    }
+  } catch (err) {
+    console.error('Fetch failed:', err);
+    return 'neutral';
+  }
+};
+
+// 🔹 สีพื้นหลังตามอารมณ์จาก mock
 const moodColors = {
   happy: '#FFD700',
   sad: '#87CEFA',
   angry: '#FF6347',
   neutral: '#D3D3D3'
+};
+
+// 🔹 emoji แสดงตาม EmoNews API
+const moodEmoji = {
+  surprise: '😲',
+  neutral: '😐',
+  sadness: '😢',
+  pleasant: '😊',
+  fear: '😨',
+  anger: '😠',
+  joy: '😄'
 };
 
 function CalendarPage({ username, userId }) {
@@ -43,7 +80,11 @@ function CalendarPage({ username, userId }) {
 
         if (localDate.getMonth() === currentMonth && localDate.getFullYear() === currentYear) {
           const day = localDate.getDate();
-          entriesObject[day] = { text: entry.text_content, mood: entry.mood };
+          entriesObject[day] = {
+            text: entry.text_content,
+            moodColor: entry.mood,      // จาก mock
+            moodEmoji: entry.mood       // เบื้องต้นใช้ mood เดิมแสดง emoji
+          };
         }
       });
       setEntries(entriesObject);
@@ -59,7 +100,9 @@ function CalendarPage({ username, userId }) {
   const handleSave = async () => {
     if (!text.trim() || !selectedDay || !userId) return;
 
-    const mood = await mockAnalyzeMoodAPI(text);
+    const moodColor = await mockAnalyzeMoodAPI(text);
+    const moodEmojiResult = await analyzeMoodFromEmoNews(text);
+
     const year = currentYear;
     const month = (currentMonth + 1).toString().padStart(2, '0');
     const day = selectedDay.toString().padStart(2, '0');
@@ -69,14 +112,18 @@ function CalendarPage({ username, userId }) {
       userId: userId,
       date: dateString,
       text: text,
-      mood: mood,
+      mood: moodColor
     };
 
     try {
       await saveCalendarEntry(entryData);
       setEntries(prevEntries => ({
         ...prevEntries,
-        [selectedDay]: { text, mood }
+        [selectedDay]: {
+          text,
+          moodColor,
+          moodEmoji: moodEmojiResult
+        }
       }));
       setText('');
       setSelectedDay(null);
@@ -102,9 +149,13 @@ function CalendarPage({ username, userId }) {
               setSelectedDay(day);
               setText(entries[day]?.text || '');
             }}
-            style={{ backgroundColor: entries[day]?.mood ? moodColors[entries[day].mood] : '#fff' }}
+            style={{
+              backgroundColor: entries[day]?.moodColor
+                ? moodColors[entries[day].moodColor]
+                : '#fff'
+            }}
           >
-            {day}
+            {day} {entries[day]?.moodEmoji ? moodEmoji[entries[day].moodEmoji] : ''}
           </div>
         ))}
       </div>

@@ -12,7 +12,6 @@ html, body {
   overflow: auto;
 }
 .content {
-  height: 120vh;
   width: 100%;
   flex-grow: 1;
   text-align: center;

@@ -7,6 +7,7 @@ import TimeCapsulePage from "./pages/TimeCapsulePage";
 import EmpathyWallPage from "./pages/EmpathyWallPage";
 import CalendarPage from "./pages/CalendarPage";
 import HomePage from "./pages/Homepage";
+import Check from "./pages/Appraisement";
 import "./App.css";
 
 function App() {
@@ -76,6 +77,7 @@ function App() {
               element={<EmpathyWallPage currentUser={currentUser} />}
             />
             <Route path="/analyze" element={<HomePage />} />
+            <Route path="/check" element={<Check />} />
           </Routes>
         </main>
       </div>

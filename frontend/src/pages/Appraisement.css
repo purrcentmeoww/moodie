@@ -1,0 +1,80 @@
+.appraisement-heading{
+    margin-top: 90px;
+}
+
+.appraisement-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+    padding-top: 30px;
+  }
+  
+  .box {
+    width: 300px;
+    border-radius: 10px;
+    border: 2px solid;
+    padding: 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    text-align: center;
+  }
+  
+  .box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .box h3 {
+    margin-bottom: 10px;
+  }
+  
+  .box ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 10px;
+  }
+  
+  .box ul li::before {
+    content: "✔ ";
+    color: red;
+  }
+  
+  .link {
+    color: #d33;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  
+  /* Color classes */
+  .red {
+    border-color: #f99;
+    background-color: #fff5f5;
+  }
+  
+  .purple {
+    border-color: #c9f;
+    background-color: #f9f5ff;
+  }
+  
+  .green {
+    border-color: #8fd;
+    background-color: #f5fff9;
+  }
+  
+  .blue {
+    border-color: #7cf;
+    background-color: #f0faff;
+  }
+  .appraisement-page {
+    padding: 30px 20px;
+    text-align: center;
+  }
+  
+  .appraisement-heading {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #333;
+  }
+  
